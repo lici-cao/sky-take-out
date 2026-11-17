@@ -172,8 +172,7 @@ CREATE TABLE IF NOT EXISTS orders
     pack_amount            INT           NOT NULL DEFAULT 0 ,
     tableware_number       INT           NOT NULL DEFAULT 0 ,
     tableware_status       INT           NOT NULL DEFAULT 1 ,
-    PRIMARY KEY (id),
-);
+    PRIMARY KEY (id));
 
 CREATE INDEX IF NOT EXISTS idx_orders_idx_user_id ON orders (user_id);
 
