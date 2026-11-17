@@ -1,0 +1,29 @@
+# 桌面版（免安装）配置：内嵌 H2 文件数据库，零外部依赖
+# 数据库文件位于启动目录下的 data/sky_take_out.mv.db，删除该文件即可重置演示数据
+spring:
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: ${SKY_DB_URL:jdbc:h2:file:./data/sky_take_out;MODE=MySQL;DATABASE_TO_LOWER=TRUE;DATABASE_TO_UPPER=FALSE;CASE_INSENSITIVE_IDENTIFIERS=TRUE;NON_KEYWORDS=USER,VALUE}
+    username: sa
+    password: ''
+    druid:
+      driver-class-name: org.h2.Driver
+      url: ${SKY_DB_URL:jdbc:h2:file:./data/sky_take_out;MODE=MySQL;DATABASE_TO_LOWER=TRUE;DATABASE_TO_UPPER=FALSE;CASE_INSENSITIVE_IDENTIFIERS=TRUE;NON_KEYWORDS=USER,VALUE}
+      username: sa
+      password: ''
+      initial-size: 2
+      min-idle: 2
+      max-active: 10
+  sql:
+    init:
+      mode: always
+      encoding: UTF-8
+      schema-locations: classpath:db/schema-h2.sql
+      data-locations: classpath:db/data-h2.sql
+
+logging:
+  level:
+    root: warn
+    com.sky: info
+  file:
+    name: ./logs/sky-take-out.log

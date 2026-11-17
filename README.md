@@ -46,3 +46,16 @@
 ---
 
 MIT License · Author: [lici-cao](https://github.com/lici-cao)
+
+## 桌面版（免安装，双击即用）
+
+支持在 **无 JDK、无 MySQL** 的 Windows 机器上直接运行：由 GitHub Actions 云端构建，将 Spring Boot 主程序、
+裁剪后的 Java 17 运行时与内嵌 H2 文件数据库（MySQL 兼容模式）打包为免安装 zip。
+
+- 下载：前往 Releases 获取 `SkyTakeOut-desktop-win64.zip`
+- 使用：解压后双击 `start.bat`（带控制台）或 `start-silent.vbs`（静默启动），浏览器自动打开 http://localhost:8080
+- 账号：管理端 `admin` / `123456`；接口文档 http://localhost:8080/doc.html
+- 数据：`data\sky_take_out.mv.db`，删除 `data` 目录后重启即恢复初始演示数据
+- 构建：`.github/workflows/desktop-build.yml`（Maven 打包 → jlink 运行时 → 冒烟测试 → 打 zip → 发布 Release）
+
+桌面版与 MySQL 版共用同一套代码：默认 `dev` profile 走 MySQL，桌面版通过 `-Dspring.profiles.active=desktop` 切换内嵌 H2。

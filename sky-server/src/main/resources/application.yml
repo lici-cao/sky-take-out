@@ -1,17 +1,12 @@
 server:
-  port: 8080
+  port: ${SKY_PORT:8080}
 
 spring:
   profiles:
-    active: dev
+    # 默认 dev（MySQL）；桌面版启动时通过 -Dspring.profiles.active=desktop 切换为内嵌 H2
+    active: ${SKY_PROFILE:dev}
   main:
     allow-circular-references: true
-  datasource:
-    druid:
-      driver-class-name: ${sky.datasource.driver-class-name}
-      url: jdbc:mysql://${sky.datasource.host}:${sky.datasource.port}/${sky.datasource.database}?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
-      username: root
-      password: 123456
 
 mybatis:
   #mapper配置文件
