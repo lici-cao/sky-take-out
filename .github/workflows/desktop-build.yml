@@ -43,7 +43,7 @@ jobs:
         run: mvn -B -DskipTests clean package
 
       - name: Assemble application directory
-        shell: powershell
+        shell: pwsh
         run: |
           $ErrorActionPreference = 'Stop'
           $dist = "dist/$env:APP_NAME"
@@ -52,13 +52,13 @@ jobs:
           $jar = Get-ChildItem "sky-server/target/sky-server-*.jar" |
                  Where-Object { $_.Name -notlike "*.original" } |
                  Sort-Object Length -Descending | Select-Object -First 1
-          if (-not $jar) { throw "未找到 sky-server 可执行 jar" }
+          if (-not $jar) { throw "sky-server executable jar not found" }
           Copy-Item $jar.FullName "$dist/app/sky-take-out.jar"
-          Write-Host "主程序：$($jar.Name) / $([math]::Round($jar.Length/1MB,1)) MB"
+          Write-Host "Main jar: $($jar.Name) / $([math]::Round($jar.Length/1MB,1)) MB"
 
           # 内置 Java 运行时（自包含，用户端无需安装 JDK）
           jlink --add-modules ALL-MODULE-PATH --strip-debug --no-header-files --no-man-pages --compress=2 --output "$dist/runtime"
-          if (-not (Test-Path "$dist/runtime/bin/java.exe")) { throw "jlink 运行时生成失败" }
+          if (-not (Test-Path "$dist/runtime/bin/java.exe")) { throw "jlink runtime generation failed" }
 
           # 启动脚本与说明
           Copy-Item "desktop/start.bat" "$dist/start.bat"
@@ -72,7 +72,7 @@ jobs:
           Get-ChildItem $dist | Select-Object Name, Length | Format-Table -AutoSize
 
       - name: Smoke test (start server and call APIs)
-        shell: powershell
+        shell: pwsh
         run: |
           $ErrorActionPreference = 'Stop'
           $dist = Resolve-Path "dist/$env:APP_NAME"
@@ -94,28 +94,28 @@ jobs:
           }
 
           try {
-            if (-not $ready) { throw "服务在 120 秒内未就绪（进程退出: $($proc.HasExited)）" }
+            if (-not $ready) { throw "Server not ready within 120s (process exited: $($proc.HasExited))" }
 
             $body = '{"username":"admin","password":"123456"}'
             $login = Invoke-RestMethod -Uri 'http://127.0.0.1:8080/admin/employee/login' -Method Post -Body $body -ContentType 'application/json'
-            Write-Host "登录返回: code=$($login.code) msg=$($login.msg)"
-            if ($login.code -ne 1) { throw "管理员登录失败，H2 建表或种子数据异常" }
+            Write-Host "Login: code=$($login.code) msg=$($login.msg)"
+            if ($login.code -ne 1) { throw "Admin login failed - H2 schema or seed data problem" }
 
             $headers = @{ token = $login.data.token }
 
             $emp = Invoke-RestMethod -Uri 'http://127.0.0.1:8080/admin/employee/page?page=1&pageSize=5' -Headers $headers
-            Write-Host "员工分页: total=$($emp.data.total)"
+            Write-Host "Employee page: total=$($emp.data.total)"
 
             $cat = Invoke-RestMethod -Uri 'http://127.0.0.1:8080/admin/category/list?type=1' -Headers $headers
-            Write-Host "分类列表: $($cat.data.Count) 条"
+            Write-Host "Category list: $($cat.data.Count) rows"
 
             $shop = Invoke-RestMethod -Uri 'http://127.0.0.1:8080/user/shop/status'
-            Write-Host "营业状态: $($shop.data)"
+            Write-Host "Shop status: $($shop.data)"
 
             $ts = Invoke-RestMethod -Uri 'http://127.0.0.1:8080/admin/report/turnoverStatistics?begin=2026-01-01&end=2026-01-03' -Headers $headers
-            Write-Host "营业额统计: code=$($ts.code)"
+            Write-Host "Turnover statistics: code=$($ts.code)"
 
-            if ($emp.data.total -lt 1) { throw "种子数据未写入" }
+            if ($emp.data.total -lt 1) { throw "Seed data missing" }
             Write-Host "SMOKE TEST PASSED"
           } finally {
             if (-not $proc.HasExited) { Stop-Process -Id $proc.Id -Force }
@@ -130,7 +130,7 @@ jobs:
           if (-not $ready) { exit 1 }
 
       - name: Package zip
-        shell: powershell
+        shell: pwsh
         run: |
           $ErrorActionPreference = 'Stop'
           $src = (Resolve-Path "dist/$env:APP_NAME").Path
@@ -138,7 +138,7 @@ jobs:
           Add-Type -AssemblyName System.IO.Compression.FileSystem
           [System.IO.Compression.ZipFile]::CreateFromDirectory($src, $zip, [System.IO.Compression.CompressionLevel]::Optimal, $true, [System.Text.Encoding]::UTF8)
           $f = Get-Item $zip
-          Write-Host "产物: $($f.Name) / $([math]::Round($f.Length/1MB,1)) MB"
+          Write-Host "Package: $($f.Name) / $([math]::Round($f.Length/1MB,1)) MB"
           "ZIP_SIZE=$([math]::Round($f.Length/1MB,1)) MB" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
 
       - name: Upload artifact
