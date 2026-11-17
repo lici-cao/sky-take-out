@@ -1,0 +1,114 @@
+<view class="container">
+  <!-- 顶部：地址 + 营业状态 -->
+  <view class="header">
+    <view class="addr" bindtap="goAddress">
+      <text class="addr-icon">📍</text>
+      <text class="addr-text">{{addressText || '选择收货地址'}}</text>
+      <text class="addr-arrow">▾</text>
+    </view>
+    <view class="shop-status {{shopStatus === 1 ? 'open' : 'closed'}}">
+      {{shopStatus === 1 ? '营业中' : '休息中'}}
+    </view>
+  </view>
+
+  <!-- 主体：左分类 + 右商品 -->
+  <view class="main">
+    <scroll-view scroll-y class="category-bar">
+      <view
+        wx:for="{{categories}}"
+        wx:key="key"
+        class="category-item {{item.key === activeKey ? 'active' : ''}}"
+        data-key="{{item.key}}"
+        bindtap="onCategoryTap"
+      >{{item.name}}</view>
+      <view wx:if="{{categories.length === 0}}" class="category-empty">暂无分类</view>
+    </scroll-view>
+
+    <scroll-view scroll-y class="goods-list">
+      <block wx:for="{{goodsList}}" wx:key="id">
+        <view class="goods-item">
+          <image class="goods-img" src="{{item.image}}" mode="aspectFill" lazy-load />
+          <view class="goods-info">
+            <view class="goods-name">{{item.name}}</view>
+            <view class="goods-desc">{{item.description || (activeType === 1 ? item.detail : '')}}</view>
+            <view class="goods-bottom">
+              <view class="price"><text class="symbol">¥</text>{{item.price}}</view>
+              <!-- 计步器 -->
+              <view class="stepper">
+                <block wx:if="{{cartMap[item._key]}}">
+                  <view class="stepper-btn minus" data-item="{{item}}" catchtap="subGoods">−</view>
+                  <text class="stepper-count">{{cartMap[item._key].number}}</text>
+                </block>
+                <view class="stepper-btn plus" data-item="{{item}}" catchtap="addGoods">＋</view>
+              </view>
+            </view>
+          </view>
+        </view>
+      </block>
+      <view wx:if="{{goodsList.length === 0}}" class="empty">
+        <view class="empty-icon">🍽️</view>
+        <view>该分类暂无商品</view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 购物车栏 -->
+  <view class="cart-bar {{cartCount > 0 ? 'active' : ''}}">
+    <view class="cart-left" bindtap="toggleCartPopup">
+      <view class="cart-icon-wrap">
+        <text class="cart-icon">🛒</text>
+        <view wx:if="{{cartCount > 0}}" class="cart-badge">{{cartCount}}</view>
+      </view>
+      <view class="cart-total">
+        <block wx:if="{{cartCount > 0}}"><text class="symbol">¥</text>{{cartAmount}}</block>
+        <block wx:else>购物车是空的</block>
+      </view>
+    </view>
+    <view class="cart-submit {{cartCount > 0 && shopStatus === 1 ? '' : 'disabled'}}" bindtap="goSubmit">去结算</view>
+  </view>
+
+  <!-- 购物车明细弹层 -->
+  <view wx:if="{{showCartPopup}}" class="mask" bindtap="closePopups"></view>
+  <view wx:if="{{showCartPopup}}" class="cart-popup">
+    <view class="cart-popup-header">
+      <text>购物车</text>
+      <view class="cart-clean" bindtap="cleanCart">清空</view>
+    </view>
+    <scroll-view scroll-y class="cart-popup-list">
+      <view wx:for="{{cartList}}" wx:key="id" class="cart-row">
+        <view class="cart-row-name">{{item.name}}</view>
+        <view class="cart-row-price">¥{{item.amount}}</view>
+        <view class="stepper">
+          <view class="stepper-btn minus" data-item="{{item}}" catchtap="subCartRow">−</view>
+          <text class="stepper-count">{{item.number}}</text>
+          <view class="stepper-btn plus" data-item="{{item}}" catchtap="addCartRow">＋</view>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 口味选择弹窗 -->
+  <view wx:if="{{showFlavorPopup}}" class="mask" bindtap="closePopups"></view>
+  <view wx:if="{{showFlavorPopup}}" class="flavor-popup">
+    <view class="flavor-title">{{currentDish.name}}</view>
+    <view wx:for="{{currentDish.flavors}}" wx:key="name" wx:for-item="flavor" class="flavor-group">
+      <view class="flavor-name">{{flavor.name}}</view>
+      <view class="flavor-values">
+        <view
+          wx:for="{{flavor.value}}" wx:key="*this" wx:for-item="val"
+          class="flavor-value {{selectedFlavor[flavor.name] === val ? 'selected' : ''}}"
+          data-name="{{flavor.name}}"
+          data-value="{{val}}"
+          bindtap="onFlavorTap"
+        >{{val}}</view>
+      </view>
+    </view>
+    <view class="flavor-actions">
+      <button class="btn-outline" bindtap="closePopups">取消</button>
+      <button class="btn-primary flavor-confirm" bindtap="confirmFlavor">加入购物车</button>
+    </view>
+  </view>
+
+  <!-- AI 助手悬浮入口 -->
+  <ai-float bottom="220rpx" />
+</view>

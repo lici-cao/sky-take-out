@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "苍穹外卖",
+  "enablePullDownRefresh": true,
+  "usingComponents": {
+    "ai-float": "/components/ai-float/ai-float"
+  }
+}

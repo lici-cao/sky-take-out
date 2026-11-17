@@ -1,0 +1,24 @@
+<view class="container">
+  <view wx:if="{{list.length > 0}}" class="addr-list">
+    <view wx:for="{{list}}" wx:key="id" class="addr-card" data-id="{{item.id}}" bindtap="onSelect">
+      <view class="addr-main">
+        <view class="addr-line1">
+          <text class="consignee">{{item.consignee}}</text>
+          <text class="phone">{{item.phone}}</text>
+          <text wx:if="{{item.isDefault === 1}}" class="default-tag">默认</text>
+        </view>
+        <view class="addr-detail">{{item.provinceName}}{{item.cityName}}{{item.districtName}}{{item.detail}}</view>
+      </view>
+      <view class="addr-edit" data-id="{{item.id}}" catchtap="onEdit">编辑</view>
+    </view>
+  </view>
+
+  <view wx:else class="empty">
+    <view class="empty-icon">📍</view>
+    <view>还没有收货地址，快去添加吧</view>
+  </view>
+
+  <view class="add-btn-wrap">
+    <button class="btn-primary" bindtap="onAdd">＋ 新增收货地址</button>
+  </view>
+</view>

@@ -1,0 +1,63 @@
+.user-card {
+  background: linear-gradient(135deg, #FFD100, #FFB200);
+  margin: 20rpx;
+  border-radius: 20rpx;
+  padding: 48rpx 32rpx;
+  display: flex;
+  align-items: center;
+}
+.avatar {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 50%;
+  background: #fff;
+  border: 4rpx solid rgba(255, 255, 255, 0.6);
+}
+.avatar-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 64rpx;
+  background: #fff;
+}
+.user-info { margin-left: 28rpx; }
+.nickname { font-size: 36rpx; font-weight: 700; color: #333; }
+.user-desc { margin-top: 8rpx; font-size: 24rpx; color: rgba(51, 51, 51, 0.6); }
+
+.menu-card {
+  background: #fff;
+  border-radius: 16rpx;
+  margin: 20rpx;
+  overflow: hidden;
+}
+.menu-item {
+  display: flex;
+  align-items: center;
+  padding: 32rpx 28rpx;
+  border-bottom: 2rpx solid #F7F7F7;
+}
+.menu-item:last-child { border-bottom: none; }
+.menu-item:active { background: #F9F9F9; }
+.menu-icon { font-size: 36rpx; }
+.menu-label { flex: 1; margin-left: 20rpx; font-size: 28rpx; color: #333; }
+.menu-badge {
+  background: #FF5339;
+  color: #fff;
+  font-size: 18rpx;
+  padding: 2rpx 10rpx;
+  border-radius: 12rpx;
+  margin-right: 12rpx;
+}
+.menu-arrow { color: #CCC; font-size: 36rpx; }
+
+.logout-btn {
+  margin: 60rpx 20rpx;
+  height: 88rpx;
+  line-height: 88rpx;
+  text-align: center;
+  background: #fff;
+  border-radius: 44rpx;
+  color: #FF5339;
+  font-size: 30rpx;
+}
+.logout-btn:active { background: #F9F9F9; }

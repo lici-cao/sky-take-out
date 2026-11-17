@@ -1,0 +1,26 @@
+<view class="pay-page">
+  <view class="amount-card">
+    <view class="amount-label">支付金额</view>
+    <view class="amount"><text class="symbol">¥</text>{{amountText}}</view>
+    <view class="order-no">订单号：{{orderNumber}}</view>
+    <view class="countdown">请在 {{countdownText}} 内完成支付，超时订单将自动取消</view>
+  </view>
+
+  <view class="pay-methods card">
+    <view class="card-title">选择支付方式</view>
+    <view class="pay-row">
+      <view class="pay-left">
+        <view class="wx-icon">微</view>
+        <text class="pay-name">微信支付</text>
+      </view>
+      <view class="radio checked"></view>
+    </view>
+  </view>
+
+  <view class="pay-btn-wrap">
+    <button class="pay-btn" loading="{{paying}}" disabled="{{paying}}" bindtap="handlePay">
+      确认支付 ¥{{amountText}}
+    </button>
+    <view class="pay-cancel" bindtap="cancelPay">暂不支付，返回订单</view>
+  </view>
+</view>

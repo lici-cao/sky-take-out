@@ -1,0 +1,17 @@
+<view class="login-page">
+  <view class="logo-wrap">
+    <view class="logo">穹</view>
+    <view class="app-name">苍穹外卖</view>
+    <view class="app-slogan">品质外卖 · 准时送达</view>
+  </view>
+
+  <view class="login-area">
+    <button
+      class="btn-login"
+      loading="{{loading}}"
+      disabled="{{loading}}"
+      bindtap="handleLogin"
+    >微信授权登录</button>
+    <view class="tip">登录即代表同意《用户协议》与《隐私政策》</view>
+  </view>
+</view>

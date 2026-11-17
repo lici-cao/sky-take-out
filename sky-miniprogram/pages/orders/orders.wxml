@@ -1,0 +1,58 @@
+<view class="container">
+  <!-- 状态筛选栏 -->
+  <scroll-view scroll-x class="tab-bar" enhanced show-scrollbar="{{false}}">
+    <view
+      wx:for="{{tabs}}"
+      wx:key="value"
+      class="tab-item {{status === item.value ? 'active' : ''}}"
+      data-value="{{item.value}}"
+      bindtap="onTabTap"
+    >{{item.label}}</view>
+  </scroll-view>
+
+  <!-- 订单列表 -->
+  <view class="order-list">
+    <view wx:for="{{orders}}" wx:key="id" class="order-card" data-id="{{item.id}}" bindtap="goDetail">
+      <view class="order-head">
+        <text class="order-no">订单号：{{item.number}}</text>
+        <text class="status-tag status-{{item.status}}">{{item.statusText}}</text>
+      </view>
+
+      <view class="order-dishes">
+        <view class="dish-line" wx:for="{{item.orderDetailList}}" wx:for-item="d" wx:key="id" wx:if="{{index < 3}}">
+          <text class="dish-name">{{d.name}}</text>
+          <text class="dish-num">x{{d.number}}</text>
+        </view>
+        <view class="dish-more" wx:if="{{item.orderDetailList.length > 3}}">
+          等 {{item.orderDetailList.length}} 件商品
+        </view>
+      </view>
+
+      <view class="order-foot">
+        <text class="order-time">{{item.orderTimeText}}</text>
+        <text class="order-amount"><text class="symbol">¥</text>{{item.amountText}}</text>
+      </view>
+
+      <!-- 操作按钮 -->
+      <view class="order-actions">
+        <button wx:if="{{item.status === 1}}" class="btn-outline" size="mini" catchtap="cancelOrder" data-id="{{item.id}}">取消订单</button>
+        <button wx:if="{{item.status === 1}}" class="btn-primary-mini" catchtap="goPay" data-item="{{item}}">去支付</button>
+        <button wx:if="{{item.status === 2 || item.status === 3}}" class="btn-outline" size="mini" catchtap="remindOrder" data-id="{{item.id}}">催单</button>
+        <button wx:if="{{item.status === 2}}" class="btn-outline" size="mini" catchtap="cancelOrder" data-id="{{item.id}}">取消订单</button>
+        <button wx:if="{{item.status === 5 || item.status === 6}}" class="btn-outline" size="mini" catchtap="repeatOrder" data-id="{{item.id}}">再来一单</button>
+      </view>
+    </view>
+
+    <!-- 加载状态 -->
+    <view wx:if="{{loading}}" class="load-tip">加载中…</view>
+    <view wx:elif="{{!hasMore && orders.length > 0}}" class="load-tip">没有更多了</view>
+    <view wx:if="{{!loading && orders.length === 0}}" class="empty">
+      <view class="empty-icon">📦</view>
+      <view>暂无相关订单</view>
+      <button class="btn-primary empty-btn" bindtap="goIndex">去逛逛</button>
+    </view>
+  </view>
+
+  <!-- AI 助手悬浮入口 -->
+  <ai-float bottom="60rpx" />
+</view>

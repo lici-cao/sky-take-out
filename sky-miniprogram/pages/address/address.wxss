@@ -1,0 +1,45 @@
+.addr-list { padding-bottom: 160rpx; }
+.addr-card {
+  background: #fff;
+  border-radius: 16rpx;
+  margin: 20rpx;
+  padding: 28rpx 24rpx;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.04);
+}
+.addr-main { flex: 1; }
+.addr-line1 { display: flex; align-items: center; gap: 16rpx; }
+.consignee { font-size: 30rpx; font-weight: 600; }
+.phone { font-size: 26rpx; color: #666; }
+.default-tag {
+  background: #FFF8DC;
+  color: #E6A23C;
+  font-size: 20rpx;
+  padding: 2rpx 12rpx;
+  border-radius: 8rpx;
+}
+.addr-detail {
+  margin-top: 12rpx;
+  font-size: 24rpx;
+  color: #999;
+  line-height: 38rpx;
+}
+.addr-edit {
+  padding: 20rpx 0 20rpx 30rpx;
+  color: #666;
+  font-size: 26rpx;
+  border-left: 2rpx solid #F2F2F2;
+  padding-left: 30rpx;
+  margin-left: 20rpx;
+}
+
+.add-btn-wrap {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 20rpx 40rpx calc(20rpx + env(safe-area-inset-bottom));
+  background: #fff;
+  box-shadow: 0 -2rpx 12rpx rgba(0, 0, 0, 0.06);
+}

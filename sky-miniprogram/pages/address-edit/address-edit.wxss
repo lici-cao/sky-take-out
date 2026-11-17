@@ -1,0 +1,59 @@
+.form-card {
+  background: #fff;
+  border-radius: 16rpx;
+  margin: 20rpx;
+  padding: 0 24rpx;
+}
+.form-row {
+  display: flex;
+  align-items: center;
+  padding: 28rpx 0;
+  border-bottom: 2rpx solid #F7F7F7;
+}
+.form-row:last-child { border-bottom: none; }
+.form-row.column {
+  flex-direction: column;
+  align-items: flex-start;
+}
+.form-label {
+  width: 170rpx;
+  font-size: 28rpx;
+  color: #333;
+  flex-shrink: 0;
+}
+.form-input {
+  flex: 1;
+  font-size: 28rpx;
+}
+.form-textarea {
+  width: 100%;
+  height: 140rpx;
+  margin-top: 16rpx;
+  background: #F7F8FA;
+  border-radius: 12rpx;
+  padding: 20rpx;
+  box-sizing: border-box;
+  font-size: 26rpx;
+}
+
+.sex-group { display: flex; gap: 20rpx; }
+.sex-item {
+  padding: 10rpx 36rpx;
+  border-radius: 32rpx;
+  background: #F5F5F5;
+  font-size: 26rpx;
+  color: #666;
+}
+.sex-item.active {
+  background: #FFF8DC;
+  color: #E6A23C;
+  border: 2rpx solid #FFC200;
+}
+
+.save-wrap { padding: 60rpx 40rpx; }
+.delete-btn {
+  margin-top: 28rpx;
+  text-align: center;
+  color: #FF5339;
+  font-size: 28rpx;
+}

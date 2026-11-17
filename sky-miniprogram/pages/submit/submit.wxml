@@ -1,0 +1,86 @@
+<view class="container">
+  <!-- 收货地址 -->
+  <view class="addr-card card" bindtap="goAddress">
+    <block wx:if="{{address.id}}">
+      <view class="addr-icon">📍</view>
+      <view class="addr-info">
+        <view class="addr-line1">
+          <text class="consignee">{{address.consignee}}</text>
+          <text class="phone">{{address.phone}}</text>
+        </view>
+        <view class="addr-detail">{{address.detail}}</view>
+      </view>
+      <text class="addr-arrow">›</text>
+    </block>
+    <block wx:else>
+      <view class="addr-empty">＋ 请选择收货地址</view>
+      <text class="addr-arrow">›</text>
+    </block>
+  </view>
+
+  <!-- 送达时间 -->
+  <view class="card time-card">
+    <view class="time-row" bindtap="onTimeTypeTap" data-type="1">
+      <text>立即送出</text>
+      <view class="radio {{deliveryType === 1 ? 'checked' : ''}}"></view>
+    </view>
+    <view class="time-row" bindtap="onTimeTypeTap" data-type="2">
+      <text>预约送达</text>
+      <view class="radio {{deliveryType === 2 ? 'checked' : ''}}"></view>
+    </view>
+    <picker
+      wx:if="{{deliveryType === 2}}"
+      mode="time"
+      value="{{estimatedTime}}"
+      bindchange="onTimeChange"
+    >
+      <view class="time-picker">
+        <text class="time-picker-label">送达时间</text>
+        <text class="time-picker-value">{{estimatedTime || '请选择时间'}} ›</text>
+      </view>
+    </picker>
+  </view>
+
+  <!-- 订单商品 -->
+  <view class="card">
+    <view class="card-title">订单商品</view>
+    <view wx:for="{{cartList}}" wx:key="id" class="dish-row">
+      <image class="dish-img" src="{{item.image}}" mode="aspectFill" />
+      <view class="dish-info">
+        <view class="dish-name">{{item.name}}</view>
+        <view wx:if="{{item.dishFlavor}}" class="dish-flavor">{{item.dishFlavor}}</view>
+      </view>
+      <text class="dish-num">x{{item.number}}</text>
+      <text class="dish-amount">¥{{item.amountText}}</text>
+    </view>
+  </view>
+
+  <!-- 餐具数量 -->
+  <view class="card">
+    <view class="row" bindtap="onTablewareTap">
+      <text class="row-label">餐具数量</text>
+      <text class="row-value">{{tablewareText}} ›</text>
+    </view>
+  </view>
+
+  <!-- 备注 -->
+  <view class="card">
+    <view class="card-title">备注</view>
+    <textarea
+      class="remark-input"
+      placeholder="口味偏好、少辣等要求请在此填写"
+      maxlength="100"
+      value="{{remark}}"
+      bindinput="onRemarkInput"
+    />
+  </view>
+
+  <!-- 底部结算栏 -->
+  <view class="footer">
+    <view class="total">
+      <text class="total-label">合计</text>
+      <text class="total-amount"><text class="symbol">¥</text>{{totalAmount}}</text>
+    </view>
+    <view class="submit-btn {{canSubmit ? '' : 'disabled'}}" bindtap="submitOrder">提交订单</view>
+  </view>
+</view>

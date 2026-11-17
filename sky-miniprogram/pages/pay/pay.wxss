@@ -1,0 +1,71 @@
+.pay-page {
+  min-height: 100vh;
+  padding-top: 40rpx;
+  box-sizing: border-box;
+}
+
+.amount-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 60rpx 0;
+}
+.amount-label { font-size: 26rpx; color: #999; }
+.amount {
+  margin-top: 16rpx;
+  font-size: 88rpx;
+  font-weight: 700;
+  color: #333;
+}
+.amount .symbol { font-size: 48rpx; }
+.order-no { margin-top: 20rpx; font-size: 24rpx; color: #999; }
+.countdown { margin-top: 12rpx; font-size: 24rpx; color: #FF7A00; }
+
+.pay-methods { margin: 20rpx; }
+.card-title { font-size: 28rpx; font-weight: 600; margin-bottom: 20rpx; }
+.pay-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16rpx 0;
+}
+.pay-left { display: flex; align-items: center; }
+.wx-icon {
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: 12rpx;
+  background: #00C250;
+  color: #fff;
+  font-size: 32rpx;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.pay-name { margin-left: 20rpx; font-size: 30rpx; }
+.radio {
+  width: 40rpx;
+  height: 40rpx;
+  border-radius: 50%;
+  border: 2rpx solid #DDD;
+  box-sizing: border-box;
+}
+.radio.checked { border: 13rpx solid #FFC200; }
+
+.pay-btn-wrap { padding: 60rpx 40rpx; }
+.pay-btn {
+  background: linear-gradient(135deg, #FFD100, #FFB200);
+  color: #333;
+  font-size: 32rpx;
+  font-weight: 600;
+  height: 96rpx;
+  line-height: 96rpx;
+  border-radius: 48rpx;
+}
+.pay-btn::after { border: none; }
+.pay-cancel {
+  margin-top: 32rpx;
+  text-align: center;
+  font-size: 26rpx;
+  color: #999;
+}

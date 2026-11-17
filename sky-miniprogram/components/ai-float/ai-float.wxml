@@ -1,0 +1,5 @@
+<!-- AI 助手全局悬浮入口 -->
+<view class="ai-float" style="bottom: {{bottom}};" bindtap="goAI" hover-class="ai-float-hover">
+  <view class="ai-icon">AI</view>
+  <view class="ai-tip">智能助手</view>
+</view>
