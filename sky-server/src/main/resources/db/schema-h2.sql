@@ -12,8 +12,8 @@ CREATE TABLE IF NOT EXISTS employee
     status      INT          NOT NULL DEFAULT 1 ,
     create_time DATETIME     NOT NULL ,
     update_time DATETIME     NOT NULL ,
-    create_user BIGINT       NOT NULL ,
-    update_user BIGINT       NOT NULL ,
+    create_user BIGINT DEFAULT NULL ,
+    update_user BIGINT DEFAULT NULL ,
     PRIMARY KEY (id),
     UNIQUE (username)
 );
@@ -27,8 +27,8 @@ CREATE TABLE IF NOT EXISTS category
     status      INT          NOT NULL DEFAULT 0 ,
     create_time DATETIME     NOT NULL ,
     update_time DATETIME     NOT NULL ,
-    create_user BIGINT       NOT NULL ,
-    update_user BIGINT       NOT NULL ,
+    create_user BIGINT DEFAULT NULL ,
+    update_user BIGINT DEFAULT NULL ,
     PRIMARY KEY (id)
 );
 
@@ -45,8 +45,8 @@ CREATE TABLE IF NOT EXISTS dish
     status      INT           NOT NULL DEFAULT 1 ,
     create_time DATETIME      NOT NULL ,
     update_time DATETIME      NOT NULL ,
-    create_user BIGINT        NOT NULL ,
-    update_user BIGINT        NOT NULL ,
+    create_user BIGINT DEFAULT NULL ,
+    update_user BIGINT DEFAULT NULL ,
     PRIMARY KEY (id)
 );
 
@@ -74,8 +74,8 @@ CREATE TABLE IF NOT EXISTS setmeal
     image       VARCHAR(255)  NOT NULL ,
     create_time DATETIME      NOT NULL ,
     update_time DATETIME      NOT NULL ,
-    create_user BIGINT        NOT NULL ,
-    update_user BIGINT        NOT NULL ,
+    create_user BIGINT DEFAULT NULL ,
+    update_user BIGINT DEFAULT NULL ,
     PRIMARY KEY (id)
 );
 
