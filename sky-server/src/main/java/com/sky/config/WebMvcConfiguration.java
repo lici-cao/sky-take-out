@@ -13,6 +13,7 @@ import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.io.File;
@@ -48,6 +49,15 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
     }
 
     /**
+     * 管理后台目录路径重定向到静态页面
+     */
+    @Override
+    public void addViewControllers(ViewControllerRegistry registry) {
+        registry.addRedirectViewController("/manage", "/manage/index.html");
+        registry.addRedirectViewController("/manage/", "/manage/index.html");
+    }
+
+    /**
      * 通过knife4j生成接口文档
      * @return
      */
@@ -79,11 +89,14 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
     @Override
     public void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
         log.info("扩展消息转换器...");
-        //创建一个消息转换器对象
-        MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
-        //需要为消息转换器设置一个对象转换器，对象转换器可以将Java对象序列化为json数据（统一日期格式等）
-        converter.setObjectMapper(new JacksonObjectMapper());
-        //将自己的消息转换器加入容器中
-        converters.add(0, converter);
+        //注意：不能新建 MappingJackson2HttpMessageConverter 并插入到链首。
+        //springdoc/knife4j 的 /v3/api-docs 返回的是 String 类型响应体，链首若为 Jackson 转换器会
+        //把该字符串再次 JSON 序列化，导致 /doc.html 拿到的是被二次编码的字符串（页面空白）。
+        //这里只替换已有 Jackson 转换器的 ObjectMapper，保持转换器顺序不变，日期格式等业务序列化行为不变。
+        for (HttpMessageConverter<?> converter : converters) {
+            if (converter instanceof MappingJackson2HttpMessageConverter) {
+                ((MappingJackson2HttpMessageConverter) converter).setObjectMapper(new JacksonObjectMapper());
+            }
+        }
     }
 }
