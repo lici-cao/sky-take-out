@@ -59,3 +59,10 @@ MIT License · Author: [lici-cao](https://github.com/lici-cao)
 - 构建：`.github/workflows/desktop-build.yml`（Maven 打包 → jlink 运行时 → 冒烟测试 → 打 zip → 发布 Release）
 
 桌面版与 MySQL 版共用同一套代码：默认 `dev` profile 走 MySQL，桌面版通过 `-Dspring.profiles.active=desktop` 切换内嵌 H2。
+
+### v1.1.0 更新
+
+- 内置管理后台界面：启动后自动进入 `http://localhost:8080/manage/index.html`，可直接操作员工、分类、菜品、套餐、订单与营业状态
+- 修复接口文档 `/doc.html` 空白问题（`/v3/api-docs` 曾被自定义消息转换器二次编码，现已修正转换器注册方式）
+- 接口速查说明页保留在 `/about.html`
+- 构建冒烟测试新增：管理界面可访问、根路径可访问、`/v3/api-docs` 必须是标准 OpenAPI 对象
