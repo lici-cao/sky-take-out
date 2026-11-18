@@ -66,3 +66,4 @@ MIT License · Author: [lici-cao](https://github.com/lici-cao)
 - 修复接口文档 `/doc.html` 空白问题（`/v3/api-docs` 曾被自定义消息转换器二次编码，现已修正转换器注册方式）
 - 接口速查说明页保留在 `/about.html`
 - 构建冒烟测试新增：管理界面可访问、根路径可访问、`/v3/api-docs` 必须是标准 OpenAPI 对象
+- 构建产物：`SkyTakeOut-desktop-win64.zip`（约 130 MB，含内置运行时）
