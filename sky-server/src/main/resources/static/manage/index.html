@@ -1,0 +1,819 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>苍穹外卖 · 管理后台</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Microsoft YaHei","PingFang SC",system-ui,sans-serif;background:#f4f6f9;color:#243044;font-size:14px}
+button{font-family:inherit;font-size:13px;cursor:pointer;border:none;border-radius:6px;padding:7px 14px;background:#e8edf5;color:#243044;transition:.15s}
+button:hover{filter:brightness(.96)}
+button.primary{background:#2f6feb;color:#fff}
+button.danger{background:#fdeaea;color:#d93a3a}
+button.ok{background:#e6f6ec;color:#12864a}
+button:disabled{opacity:.5;cursor:not-allowed}
+input,select,textarea{font-family:inherit;font-size:13px;padding:7px 10px;border:1px solid #d5dded;border-radius:6px;background:#fff;color:#243044;outline:none;width:100%}
+input:focus,select:focus,textarea:focus{border-color:#2f6feb}
+table{width:100%;border-collapse:collapse;background:#fff}
+th,td{padding:10px 12px;text-align:left;border-bottom:1px solid #eef2f8;font-size:13px;vertical-align:middle}
+th{background:#f8fafd;color:#63728c;font-weight:600;white-space:nowrap}
+tbody tr:hover{background:#fafcff}
+.tag{display:inline-block;padding:2px 8px;border-radius:10px;font-size:12px}
+.tag.on{background:#e6f6ec;color:#12864a}
+.tag.off{background:#f1f3f6;color:#7b879b}
+.tag.warn{background:#fff4e5;color:#b96a00}
+.tag.blue{background:#e9f1fe;color:#2f6feb}
+#login{position:fixed;inset:0;background:linear-gradient(135deg,#1c2b45,#2f6feb);display:flex;align-items:center;justify-content:center;z-index:99}
+#login .box{background:#fff;padding:34px 32px;border-radius:14px;width:340px;box-shadow:0 18px 50px rgba(0,0,0,.25)}
+#login h1{font-size:19px;margin-bottom:6px}
+#login p{color:#7b879b;font-size:12px;margin-bottom:20px}
+#login .field{margin-bottom:14px}
+#login label{display:block;font-size:12px;color:#63728c;margin-bottom:5px}
+#login button{width:100%;padding:10px;font-size:14px;margin-top:6px}
+#app{display:none;min-height:100vh}
+#app.on{display:flex}
+aside{width:208px;background:#1c2b45;color:#cfd8e6;padding:18px 0;flex-shrink:0;display:flex;flex-direction:column}
+aside .brand{padding:0 20px 16px;font-size:16px;color:#fff;font-weight:700;letter-spacing:.5px}
+aside .brand small{display:block;font-size:11px;color:#8fa3c0;font-weight:400;margin-top:4px}
+aside nav a{display:block;padding:11px 20px;color:#cfd8e6;text-decoration:none;font-size:13.5px;border-left:3px solid transparent}
+aside nav a:hover{background:#243755;color:#fff}
+aside nav a.active{background:#243755;color:#fff;border-left-color:#2f6feb}
+aside .foot{margin-top:auto;padding:14px 20px;font-size:11px;color:#7f92ad;line-height:1.7}
+main{flex:1;padding:22px 26px 40px;overflow:auto}
+.head{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;gap:12px;flex-wrap:wrap}
+.head h2{font-size:18px}
+.head .who{font-size:12.5px;color:#7b879b;display:flex;align-items:center;gap:12px}
+.card{background:#fff;border-radius:10px;padding:16px 18px;box-shadow:0 1px 3px rgba(20,40,80,.06);margin-bottom:16px}
+.card h3{font-size:14px;margin-bottom:14px;color:#243044}
+.toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.toolbar .grow{flex:1}
+.toolbar input,.toolbar select{width:auto;min-width:130px}
+.grid{display:grid;gap:14px}
+.grid.c5{grid-template-columns:repeat(auto-fit,minmax(160px,1fr))}
+.stat{background:#fff;border-radius:10px;padding:16px 18px;box-shadow:0 1px 3px rgba(20,40,80,.06)}
+.stat .k{font-size:12px;color:#7b879b;margin-bottom:8px}
+.stat .v{font-size:24px;font-weight:700;color:#1c2b45}
+.stat .v small{font-size:12px;color:#7b879b;font-weight:400;margin-left:4px}
+.pager{display:flex;align-items:center;gap:10px;justify-content:flex-end;padding:12px 4px 0;font-size:12.5px;color:#63728c}
+.modal-mask{position:fixed;inset:0;background:rgba(15,25,45,.45);display:flex;align-items:center;justify-content:center;z-index:60}
+.modal{background:#fff;border-radius:12px;width:460px;max-width:92vw;max-height:88vh;overflow:auto;box-shadow:0 20px 50px rgba(0,0,0,.25)}
+.modal .mh{padding:16px 20px;border-bottom:1px solid #eef2f8;font-weight:700}
+.modal .mb{padding:18px 20px}
+.modal .mf{padding:12px 20px;border-top:1px solid #eef2f8;display:flex;justify-content:flex-end;gap:10px}
+.form-row{margin-bottom:13px}
+.form-row label{display:block;font-size:12.5px;color:#63728c;margin-bottom:5px}
+.form-row.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+#toast{position:fixed;top:18px;left:50%;transform:translateX(-50%) translateY(-80px);background:#1c2b45;color:#fff;padding:10px 20px;border-radius:8px;font-size:13px;z-index:120;opacity:0;transition:.25s;pointer-events:none}
+#toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+.empty{padding:40px;text-align:center;color:#9aa7bd;font-size:13px}
+.thumb{width:44px;height:34px;object-fit:cover;border-radius:5px;background:#f1f3f6}
+.mono{font-family:Consolas,Menlo,monospace;font-size:12px}
+.link{color:#2f6feb;cursor:pointer;text-decoration:none}
+.ops{display:flex;gap:6px;flex-wrap:wrap}
+.ops button{padding:4px 9px;font-size:12px;border-radius:5px}
+</style>
+</head>
+<body>
+
+<div id="login">
+  <div class="box">
+    <h1>苍穹外卖 · 管理后台</h1>
+    <p>桌面版内置管理端，演示账号 admin / 123456</p>
+    <div class="field"><label>用户名</label><input id="lg-user" value="admin" autocomplete="username"></div>
+    <div class="field"><label>密码</label><input id="lg-pass" type="password" value="123456" autocomplete="current-password"></div>
+    <button class="primary" id="lg-btn">登 录</button>
+  </div>
+</div>
+
+<div id="app">
+  <aside>
+    <div class="brand">苍穹外卖<small>桌面版管理后台</small></div>
+    <nav id="nav">
+      <a href="#dashboard" data-v="dashboard">工作台</a>
+      <a href="#order" data-v="order">订单管理</a>
+      <a href="#dish" data-v="dish">菜品管理</a>
+      <a href="#setmeal" data-v="setmeal">套餐管理</a>
+      <a href="#category" data-v="category">分类管理</a>
+      <a href="#employee" data-v="employee">员工管理</a>
+      <a href="#shop" data-v="shop">营业状态</a>
+    </nav>
+    <div class="foot">接口文档 <a class="link" href="/doc.html" target="_blank" style="color:#8fb3ff">/doc.html</a><br>数据存于 data\ 目录</div>
+  </aside>
+  <main>
+    <div class="head">
+      <h2 id="title">工作台</h2>
+      <div class="who"><span id="who-name"></span><button id="btn-logout">退出</button></div>
+    </div>
+    <div id="view"></div>
+  </main>
+</div>
+
+<div id="modal-root"></div>
+<div id="toast"></div>
+
+<script>
+(function(){
+'use strict';
+
+/* ---------------- 基础工具 ---------------- */
+var TOKEN_KEY = 'sky_admin_token';
+var NAME_KEY  = 'sky_admin_name';
+var token = localStorage.getItem(TOKEN_KEY) || '';
+var views = {};
+var state = { view: 'dashboard', page: {} };
+
+function $(id){ return document.getElementById(id); }
+
+function esc(s){
+  return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+  });
+}
+
+function money(v){
+  if (v == null || v === '') return '-';
+  return '¥' + Number(v).toFixed(2);
+}
+
+function toast(msg){
+  var t = $('toast');
+  t.textContent = msg;
+  t.classList.add('on');
+  clearTimeout(toast._t);
+  toast._t = setTimeout(function(){ t.classList.remove('on'); }, 2200);
+}
+
+function request(method, url, body, formData){
+  var opt = { method: method, headers: {} };
+  if (token) opt.headers['token'] = token;
+  if (formData) {
+    opt.body = formData;
+  } else if (body !== undefined && body !== null) {
+    opt.headers['Content-Type'] = 'application/json';
+    opt.body = JSON.stringify(body);
+  }
+  return fetch(url, opt).then(function(res){
+    if (res.status === 401) {
+      doLogout(true);
+      throw new Error('登录已失效，请重新登录');
+    }
+    return res.json();
+  }).then(function(json){
+    if (json.code !== 1) {
+      toast(json.msg || '操作失败');
+      var err = new Error(json.msg || '操作失败');
+      err.handled = true;
+      throw err;
+    }
+    return json.data;
+  });
+}
+
+function qs(obj){
+  var arr = [];
+  for (var k in obj) {
+    if (!Object.prototype.hasOwnProperty.call(obj, k)) continue;
+    var v = obj[k];
+    if (v === '' || v === null || v === undefined) continue;
+    arr.push(encodeURIComponent(k) + '=' + encodeURIComponent(v));
+  }
+  return arr.length ? ('?' + arr.join('&')) : '';
+}
+
+/* ---------------- 登录 ---------------- */
+function doLogin(){
+  var username = $('lg-user').value.trim();
+  var password = $('lg-pass').value;
+  if (!username || !password) { toast('请输入用户名和密码'); return; }
+  $('lg-btn').disabled = true;
+  fetch('/admin/employee/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ username: username, password: password })
+  }).then(function(r){ return r.json(); }).then(function(json){
+    $('lg-btn').disabled = false;
+    if (json.code !== 1) { toast(json.msg || '登录失败'); return; }
+    token = json.data.token;
+    localStorage.setItem(TOKEN_KEY, token);
+    localStorage.setItem(NAME_KEY, json.data.name || json.data.userName || username);
+    enterApp();
+  }).catch(function(){
+    $('lg-btn').disabled = false;
+    toast('无法连接服务，请确认程序已启动');
+  });
+}
+
+function doLogout(silent){
+  if (token && !silent) { try { request('POST', '/admin/employee/logout'); } catch (e) {} }
+  token = '';
+  localStorage.removeItem(TOKEN_KEY);
+  localStorage.removeItem(NAME_KEY);
+  $('app').classList.remove('on');
+  $('login').style.display = 'flex';
+}
+
+function enterApp(){
+  $('login').style.display = 'none';
+  $('app').classList.add('on');
+  $('who-name').textContent = '当前用户：' + (localStorage.getItem(NAME_KEY) || 'admin');
+  var v = (location.hash || '#dashboard').slice(1);
+  if (!views[v]) v = 'dashboard';
+  go(v);
+}
+
+/* ---------------- 路由 ---------------- */
+function go(view){
+  state.view = view;
+  state.page[view] = 1;
+  var links = document.querySelectorAll('#nav a');
+  for (var i = 0; i < links.length; i++) {
+    links[i].classList.toggle('active', links[i].getAttribute('data-v') === view);
+  }
+  var titles = { dashboard:'工作台', order:'订单管理', dish:'菜品管理', setmeal:'套餐管理', category:'分类管理', employee:'员工管理', shop:'营业状态' };
+  $('title').textContent = titles[view] || '';
+  if (location.hash !== '#' + view) location.hash = '#' + view;
+  views[view]();
+}
+
+/* ---------------- 通用弹窗 ---------------- */
+function openModal(title, bodyHtml, onOk, okText){
+  var root = $('modal-root');
+  root.innerHTML = '<div class="modal-mask"><div class="modal">' +
+    '<div class="mh">' + esc(title) + '</div>' +
+    '<div class="mb">' + bodyHtml + '</div>' +
+    '<div class="mf"><button data-act="cancel">取消</button>' +
+    '<button class="primary" data-act="ok">' + esc(okText || '确定') + '</button></div>' +
+    '</div></div>';
+  var mask = root.querySelector('.modal-mask');
+  mask.addEventListener('click', function(e){ if (e.target === mask) closeModal(); });
+  root.querySelector('[data-act="cancel"]').addEventListener('click', closeModal);
+  root.querySelector('[data-act="ok"]').addEventListener('click', function(){
+    if (onOk() !== false) closeModal();
+  });
+}
+
+function closeModal(){ $('modal-root').innerHTML = ''; }
+
+function confirmBox(title, text, onOk){
+  openModal(title, '<div style="font-size:13.5px;color:#3d4b63;line-height:1.7">' + esc(text) + '</div>', onOk, '确定');
+}
+
+/* ---------------- 分页控件 ---------------- */
+function pager(view, total, page, pageSize){
+  var pages = Math.max(1, Math.ceil(total / pageSize));
+  return '<div class="pager">' +
+    '<span>共 ' + total + ' 条 / 第 ' + page + ' 页 / 共 ' + pages + ' 页</span>' +
+    '<button data-pg="' + (page - 1) + '"' + (page <= 1 ? ' disabled' : '') + '>上一页</button>' +
+    '<button data-pg="' + (page + 1) + '"' + (page >= pages ? ' disabled' : '') + '>下一页</button>' +
+    '</div>';
+}
+
+function bindPager(container, view, loader){
+  var btns = container.querySelectorAll('[data-pg]');
+  for (var i = 0; i < btns.length; i++) {
+    btns[i].addEventListener('click', function(){
+      var p = Number(this.getAttribute('data-pg'));
+      if (p < 1) return;
+      state.page[view] = p;
+      loader(p);
+    });
+  }
+}
+
+/* ================= 工作台 ================= */
+views.dashboard = function(){
+  var el = $('view');
+  el.innerHTML = '<div class="grid c5" id="dash-stats"><div class="stat"><div class="k">加载中</div><div class="v">-</div></div></div>' +
+    '<div class="grid c5" id="dash-overview" style="margin-top:14px"></div>';
+
+  Promise.all([
+    request('GET', '/admin/workspace/businessData'),
+    request('GET', '/admin/workspace/overviewOrders'),
+    request('GET', '/admin/workspace/overviewDishes'),
+    request('GET', '/admin/workspace/overviewSetmeals')
+  ]).then(function(r){
+    var b = r[0] || {}, o = r[1] || {}, d = r[2] || {}, s = r[3] || {};
+    $('dash-stats').innerHTML =
+      stat('营业额', money(b.turnover)) +
+      stat('有效订单', (b.validOrderCount == null ? '-' : b.validOrderCount), '单') +
+      stat('订单完成率', b.orderCompletionRate == null ? '-' : (Number(b.orderCompletionRate).toFixed(1) + '%')) +
+      stat('平均客单价', money(b.unitPrice)) +
+      stat('新增用户', (b.newUsers == null ? '-' : b.newUsers), '人');
+    $('dash-overview').innerHTML =
+      stat('待接单', o.waitingOrders == null ? '-' : o.waitingOrders, '单') +
+      stat('待派送', o.deliveredOrders == null ? '-' : o.deliveredOrders, '单') +
+      stat('已完成', o.completedOrders == null ? '-' : o.completedOrders, '单') +
+      stat('已取消', o.cancelledOrders == null ? '-' : o.cancelledOrders, '单') +
+      stat('菜品/套餐', (d.sold == null ? 0 : d.sold) + ' / ' + (s.sold == null ? 0 : s.sold), '在售');
+  }).catch(function(){});
+};
+
+function stat(k, v, unit){
+  return '<div class="stat"><div class="k">' + esc(k) + '</div><div class="v">' + esc(v) +
+    (unit ? '<small>' + esc(unit) + '</small>' : '') + '</div></div>';
+}
+
+/* ================= 员工 ================= */
+views.employee = function(){
+  var el = $('view');
+  el.innerHTML =
+    '<div class="card"><div class="toolbar">' +
+      '<input id="emp-name" placeholder="员工姓名">' +
+      '<button class="primary" id="emp-search">查询</button>' +
+      '<div class="grow"></div>' +
+      '<button class="primary" id="emp-add">+ 新增员工</button>' +
+    '</div></div>' +
+    '<div class="card" style="padding:0"><div id="emp-table"></div></div>';
+
+  $('emp-search').addEventListener('click', function(){ load(1); });
+  $('emp-add').addEventListener('click', function(){ empForm(null); });
+  $('emp-name').addEventListener('keydown', function(e){ if (e.key === 'Enter') load(1); });
+
+  function load(page){
+    var name = $('emp-name').value.trim();
+    request('GET', '/admin/employee/page' + qs({ page: page, pageSize: 10, name: name })).then(function(d){
+      state.page.employee = page;
+      var rows = (d.records || []).map(function(it){
+        return '<tr>' +
+          '<td>' + esc(it.name) + '</td>' +
+          '<td>' + esc(it.username) + '</td>' +
+          '<td>' + esc(it.phone) + '</td>' +
+          '<td>' + (it.sex === '1' ? '男' : '女') + '</td>' +
+          '<td class="mono">' + esc(it.idNumber) + '</td>' +
+          '<td>' + (it.status === 1 ? '<span class="tag on">启用</span>' : '<span class="tag off">禁用</span>') + '</td>' +
+          '<td class="mono">' + esc(it.updateTime || it.createTime || '') + '</td>' +
+          '<td><div class="ops">' +
+            '<button data-edit="' + it.id + '">编辑</button>' +
+            '<button class="' + (it.status === 1 ? 'danger' : 'ok') + '" data-toggle="' + it.id + '" data-st="' + (it.status === 1 ? 0 : 1) + '">' +
+              (it.status === 1 ? '禁用' : '启用') + '</button>' +
+          '</div></td>' +
+        '</tr>';
+      }).join('');
+      $('emp-table').innerHTML =
+        '<table><thead><tr><th>姓名</th><th>账号</th><th>手机号</th><th>性别</th><th>身份证号</th><th>状态</th><th>更新时间</th><th>操作</th></tr></thead><tbody>' +
+        (rows || '<tr><td colspan="8"><div class="empty">暂无数据</div></td></tr>') + '</tbody></table>' +
+        pager('employee', d.total || 0, page, 10);
+      bindPager(el, 'employee', load);
+      var eds = $('emp-table').querySelectorAll('[data-edit]');
+      for (var i = 0; i < eds.length; i++) {
+        eds[i].addEventListener('click', function(){ empForm(this.getAttribute('data-edit')); });
+      }
+      var tgs = $('emp-table').querySelectorAll('[data-toggle]');
+      for (var j = 0; j < tgs.length; j++) {
+        tgs[j].addEventListener('click', function(){
+          var id = this.getAttribute('data-toggle'), st = this.getAttribute('data-st');
+          request('POST', '/admin/employee/status/' + st + qs({ id: id })).then(function(){
+            toast('操作成功'); load(state.page.employee || 1);
+          }).catch(function(){});
+        });
+      }
+    }).catch(function(){ $('emp-table').innerHTML = '<div class="empty">加载失败</div>'; });
+  }
+
+  function empForm(id){
+    var isEdit = !!id;
+    var done = function(data){
+      var it = data || {};
+      openModal(isEdit ? '编辑员工' : '新增员工',
+        '<div class="form-row"><label>姓名</label><input id="f-name" value="' + esc(it.name) + '"></div>' +
+        '<div class="form-row"><label>账号</label><input id="f-username" value="' + esc(it.username) + '"' + (isEdit ? ' disabled' : '') + '></div>' +
+        '<div class="form-row"><label>手机号</label><input id="f-phone" value="' + esc(it.phone) + '"></div>' +
+        '<div class="form-row"><label>性别</label><select id="f-sex">' +
+          '<option value="1"' + (it.sex !== '0' ? ' selected' : '') + '>男</option>' +
+          '<option value="0"' + (it.sex === '0' ? ' selected' : '') + '>女</option></select></div>' +
+        '<div class="form-row"><label>身份证号</label><input id="f-idnum" value="' + esc(it.idNumber) + '"></div>' +
+        (isEdit ? '' : '<div class="form-row"><label>初始密码</label><input id="f-pwd" value="123456"></div>'),
+        function(){
+          var body = {
+            id: isEdit ? Number(id) : undefined,
+            name: $('f-name').value.trim(),
+            username: $('f-username').value.trim(),
+            phone: $('f-phone').value.trim(),
+            sex: $('f-sex').value,
+            idNumber: $('f-idnum').value.trim()
+          };
+          if (!body.name || !body.phone) { toast('姓名和手机号必填'); return false; }
+          if (!isEdit) {
+            body.username = body.username || body.phone;
+            body.password = $('f-pwd').value || '123456';
+          }
+          var p = isEdit ? request('PUT', '/admin/employee', body) : request('POST', '/admin/employee', body);
+          p.then(function(){ toast('保存成功'); load(isEdit ? (state.page.employee || 1) : 1); }).catch(function(){});
+        }, '保存');
+    };
+    if (isEdit) {
+      request('GET', '/admin/employee/' + id).then(done).catch(function(){});
+    } else {
+      done(null);
+    }
+  }
+
+  load(1);
+};
+
+/* ================= 分类 ================= */
+views.category = function(){
+  var el = $('view');
+  el.innerHTML =
+    '<div class="card"><div class="toolbar">' +
+      '<input id="cat-name" placeholder="分类名称">' +
+      '<select id="cat-type"><option value="">全部类型</option><option value="1">菜品分类</option><option value="2">套餐分类</option></select>' +
+      '<button class="primary" id="cat-search">查询</button>' +
+      '<div class="grow"></div>' +
+      '<button class="primary" id="cat-add">+ 新增分类</button>' +
+    '</div></div>' +
+    '<div class="card" style="padding:0"><div id="cat-table"></div></div>';
+
+  $('cat-search').addEventListener('click', function(){ load(1); });
+  $('cat-add').addEventListener('click', function(){ catForm(null); });
+
+  function load(page){
+    var q = { page: page, pageSize: 10, name: $('cat-name').value.trim(), type: $('cat-type').value };
+    request('GET', '/admin/category/page' + qs(q)).then(function(d){
+      state.page.category = page;
+      var rows = (d.records || []).map(function(it){
+        return '<tr>' +
+          '<td>' + esc(it.name) + '</td>' +
+          '<td>' + (it.type === 1 ? '<span class="tag blue">菜品分类</span>' : '<span class="tag warn">套餐分类</span>') + '</td>' +
+          '<td>' + esc(it.sort) + '</td>' +
+          '<td>' + (it.status === 1 ? '<span class="tag on">启用</span>' : '<span class="tag off">禁用</span>') + '</td>' +
+          '<td class="mono">' + esc(it.updateTime || '') + '</td>' +
+          '<td><div class="ops">' +
+            '<button data-edit="' + it.id + '">编辑</button>' +
+            '<button class="' + (it.status === 1 ? 'danger' : 'ok') + '" data-toggle="' + it.id + '" data-st="' + (it.status === 1 ? 0 : 1) + '">' + (it.status === 1 ? '禁用' : '启用') + '</button>' +
+            '<button class="danger" data-del="' + it.id + '">删除</button>' +
+          '</div></td></tr>';
+      }).join('');
+      $('cat-table').innerHTML =
+        '<table><thead><tr><th>分类名称</th><th>类型</th><th>排序</th><th>状态</th><th>更新时间</th><th>操作</th></tr></thead><tbody>' +
+        (rows || '<tr><td colspan="6"><div class="empty">暂无数据</div></td></tr>') + '</tbody></table>' +
+        pager('category', d.total || 0, page, 10);
+      bindPager(el, 'category', load);
+      bind(el, 'category', load, catForm);
+    }).catch(function(){ $('cat-table').innerHTML = '<div class="empty">加载失败</div>'; });
+  }
+
+  function catForm(id){
+    var isEdit = !!id;
+    var it = {};
+    var fill = function(){
+      openModal(isEdit ? '编辑分类' : '新增分类',
+        '<div class="form-row"><label>分类名称</label><input id="c-name" value="' + esc(it.name) + '"></div>' +
+        '<div class="form-row"><label>分类类型</label><select id="c-type">' +
+          '<option value="1"' + (it.type !== 2 ? ' selected' : '') + '>菜品分类</option>' +
+          '<option value="2"' + (it.type === 2 ? ' selected' : '') + '>套餐分类</option></select></div>' +
+        '<div class="form-row"><label>排序</label><input id="c-sort" type="number" value="' + esc(it.sort == null ? 0 : it.sort) + '"></div>',
+        function(){
+          var name = $('c-name').value.trim();
+          if (!name) { toast('请填写分类名称'); return false; }
+          var body = { id: isEdit ? Number(id) : undefined, name: name, type: Number($('c-type').value), sort: Number($('c-sort').value) || 0 };
+          var p = isEdit ? request('PUT', '/admin/category', body) : request('POST', '/admin/category', body);
+          p.then(function(){ toast('保存成功'); load(state.page.category || 1); }).catch(function(){});
+        }, '保存');
+    };
+    if (isEdit) {
+      request('GET', '/admin/category/page' + qs({ page: 1, pageSize: 100 })).then(function(d){
+        var hit = (d.records || []).filter(function(x){ return String(x.id) === String(id); })[0];
+        if (hit) it = hit;
+        fill();
+      }).catch(function(){ fill(); });
+    } else {
+      fill();
+    }
+  }
+
+  load(1);
+};
+
+/* 表格内的编辑/启停/删除事件统一绑定 */
+function bind(el, view, reload, editFn){
+  var eds = el.querySelectorAll('[data-edit]');
+  for (var i = 0; i < eds.length; i++) {
+    eds[i].addEventListener('click', function(){ editFn(this.getAttribute('data-edit')); });
+  }
+  var tgs = el.querySelectorAll('[data-toggle]');
+  for (var j = 0; j < tgs.length; j++) {
+    tgs[j].addEventListener('click', function(){
+      var path = this.getAttribute('data-toggle-path');
+      request('POST', path).then(function(){ toast('操作成功'); reload(state.page[view] || 1); }).catch(function(){});
+    });
+  }
+  var dels = el.querySelectorAll('[data-del]');
+  for (var k = 0; k < dels.length; k++) {
+    dels[k].addEventListener('click', function(){
+      var delPath = this.getAttribute('data-del-path');
+      var self = this;
+      confirmBox('确认删除', '删除后不可恢复，确定继续？', function(){
+        request('DELETE', delPath).then(function(){ toast('已删除'); reload(state.page[view] || 1); }).catch(function(){});
+      });
+    });
+  }
+}
+
+/* ================= 菜品 ================= */
+views.dish = function(){
+  var el = $('view');
+  el.innerHTML =
+    '<div class="card"><div class="toolbar">' +
+      '<input id="dish-name" placeholder="菜品名称">' +
+      '<select id="dish-cat"><option value="">全部分类</option></select>' +
+      '<select id="dish-status"><option value="">全部状态</option><option value="1">起售中</option><option value="0">已停售</option></select>' +
+      '<button class="primary" id="dish-search">查询</button>' +
+      '<div class="grow"></div>' +
+      '<button class="primary" id="dish-add">+ 新增菜品</button>' +
+    '</div></div>' +
+    '<div class="card" style="padding:0"><div id="dish-table"><div class="empty">加载中</div></div></div>';
+
+  var catCache = [];
+  request('GET', '/admin/category/list?type=1').then(function(list){
+    catCache = list || [];
+    $('dish-cat').innerHTML = '<option value="">全部分类</option>' + catCache.map(function(c){
+      return '<option value="' + c.id + '">' + esc(c.name) + '</option>';
+    }).join('');
+  }).catch(function(){});
+
+  $('dish-search').addEventListener('click', function(){ load(1); });
+  $('dish-add').addEventListener('click', function(){ dishForm(null, catCache); });
+
+  function load(page){
+    var q = { page: page, pageSize: 10, name: $('dish-name').value.trim(), categoryId: $('dish-cat').value, status: $('dish-status').value };
+    request('GET', '/admin/dish/page' + qs(q)).then(function(d){
+      state.page.dish = page;
+      var rows = (d.records || []).map(function(it){
+        return '<tr>' +
+          '<td>' + (it.image ? '<img class="thumb" src="' + esc(it.image) + '" alt="">' : '<div class="thumb"></div>') + '</td>' +
+          '<td>' + esc(it.name) + '</td>' +
+          '<td>' + money(it.price) + '</td>' +
+          '<td>' + esc(it.categoryName || categoryName(it.categoryId, catCache)) + '</td>' +
+          '<td>' + (it.status === 1 ? '<span class="tag on">起售</span>' : '<span class="tag off">停售</span>') + '</td>' +
+          '<td class="mono">' + esc(it.updateTime || '') + '</td>' +
+          '<td><div class="ops">' +
+            '<button data-edit="' + it.id + '">编辑</button>' +
+            '<button class="' + (it.status === 1 ? 'danger' : 'ok') + '" data-toggle-path="/admin/dish/status/' + (it.status === 1 ? 0 : 1) + '?id=' + it.id + '">' + (it.status === 1 ? '停售' : '起售') + '</button>' +
+            '<button class="danger" data-del-path="/admin/dish?ids=' + it.id + '">删除</button>' +
+          '</div></td></tr>';
+      }).join('');
+      $('dish-table').innerHTML =
+        '<table><thead><tr><th>图片</th><th>菜品名称</th><th>价格</th><th>分类</th><th>状态</th><th>更新时间</th><th>操作</th></tr></thead><tbody>' +
+        (rows || '<tr><td colspan="7"><div class="empty">暂无数据</div></td></tr>') + '</tbody></table>' +
+        pager('dish', d.total || 0, page, 10);
+      var btns = $('dish-table').querySelectorAll('[data-pg]');
+      for (var i = 0; i < btns.length; i++) {
+        btns[i].addEventListener('click', function(){
+          var p = Number(this.getAttribute('data-pg'));
+          if (p >= 1) { state.page.dish = p; load(p); }
+        });
+      }
+      var eds = $('dish-table').querySelectorAll('[data-edit]');
+      for (var j = 0; j < eds.length; j++) {
+        eds[j].addEventListener('click', function(){ dishForm(this.getAttribute('data-edit'), catCache); });
+      }
+      var tgs = $('dish-table').querySelectorAll('[data-toggle-path]');
+      for (var k = 0; k < tgs.length; k++) {
+        tgs[k].addEventListener('click', function(){
+          request('POST', this.getAttribute('data-toggle-path')).then(function(){ toast('操作成功'); load(state.page.dish || 1); }).catch(function(){});
+        });
+      }
+      var dels = $('dish-table').querySelectorAll('[data-del-path]');
+      for (var m = 0; m < dels.length; m++) {
+        dels[m].addEventListener('click', function(){
+          var path = this.getAttribute('data-del-path');
+          confirmBox('确认删除', '删除后不可恢复，确定继续？', function(){
+            request('DELETE', path).then(function(){ toast('已删除'); load(state.page.dish || 1); }).catch(function(){});
+          });
+        });
+      }
+    }).catch(function(){ $('dish-table').innerHTML = '<div class="empty">加载失败</div>'; });
+  }
+
+  load(1);
+};
+
+function categoryName(id, cats){
+  for (var i = 0; i < cats.length; i++) if (String(cats[i].id) === String(id)) return cats[i].name;
+  return id == null ? '-' : String(id);
+}
+
+function dishForm(id, cats){
+  var isEdit = !!id;
+  var it = { flavors: [] };
+
+  function fill(){
+    var opts = cats.map(function(c){
+      return '<option value="' + c.id + '"' + (String(c.id) === String(it.categoryId) ? ' selected' : '') + '>' + esc(c.name) + '</option>';
+    }).join('');
+    openModal(isEdit ? '编辑菜品' : '新增菜品',
+      '<div class="form-row"><label>菜品名称</label><input id="d-name" value="' + esc(it.name) + '"></div>' +
+      '<div class="form-row two">' +
+        '<div><label>所属分类</label><select id="d-cat">' + (opts || '<option value="">无分类</option>') + '</select></div>' +
+        '<div><label>价格（元）</label><input id="d-price" type="number" step="0.01" value="' + esc(it.price == null ? '' : it.price) + '"></div>' +
+      '</div>' +
+      '<div class="form-row"><label>图片地址</label><input id="d-image" value="' + esc(it.image) + '" placeholder="/upload/xxx.png 或 http 链接"></div>' +
+      '<div class="form-row"><label>菜品描述</label><textarea id="d-desc" rows="3">' + esc(it.description) + '</textarea></div>' +
+      '<div class="form-row"><label>售卖状态</label><select id="d-status">' +
+        '<option value="1"' + (it.status !== 0 ? ' selected' : '') + '>起售</option>' +
+        '<option value="0"' + (it.status === 0 ? ' selected' : '') + '>停售</option></select></div>',
+      function(){
+        var name = $('d-name').value.trim();
+        var price = $('d-price').value;
+        var catId = $('d-cat').value;
+        if (!name) { toast('请填写菜品名称'); return false; }
+        if (!price) { toast('请填写价格'); return false; }
+        var body = {
+          id: isEdit ? Number(id) : undefined,
+          name: name,
+          categoryId: catId ? Number(catId) : undefined,
+          price: Number(price),
+          image: $('d-image').value.trim(),
+          description: $('d-desc').value.trim(),
+          status: Number($('d-status').value),
+          flavors: it.flavors || []
+        };
+        var p = isEdit ? request('PUT', '/admin/dish', body) : request('POST', '/admin/dish', body);
+        p.then(function(){
+          toast('保存成功');
+          if (views.dish) { /* 重新进入菜品页以刷新 */ }
+          go('dish');
+        }).catch(function(){});
+      }, '保存');
+  }
+
+  if (isEdit) {
+    request('GET', '/admin/dish/' + id).then(function(d){ it = d || {}; fill(); }).catch(function(){ fill(); });
+  } else {
+    fill();
+  }
+}
+
+/* ================= 套餐 ================= */
+views.setmeal = function(){
+  var el = $('view');
+  el.innerHTML =
+    '<div class="card"><div class="toolbar">' +
+      '<input id="sm-name" placeholder="套餐名称">' +
+      '<select id="sm-status"><option value="">全部状态</option><option value="1">起售中</option><option value="0">已停售</option></select>' +
+      '<button class="primary" id="sm-search">查询</button>' +
+    '</div></div>' +
+    '<div class="card" style="padding:0"><div id="sm-table"><div class="empty">加载中</div></div></div>';
+
+  $('sm-search').addEventListener('click', function(){ load(1); });
+
+  function load(page){
+    var q = { page: page, pageSize: 10, name: $('sm-name').value.trim(), status: $('sm-status').value };
+    request('GET', '/admin/setmeal/page' + qs(q)).then(function(d){
+      state.page.setmeal = page;
+      var rows = (d.records || []).map(function(it){
+        return '<tr>' +
+          '<td>' + (it.image ? '<img class="thumb" src="' + esc(it.image) + '" alt="">' : '<div class="thumb"></div>') + '</td>' +
+          '<td>' + esc(it.name) + '</td>' +
+          '<td>' + (it.categoryName || '-') + '</td>' +
+          '<td class="mono">' + esc(it.price == null ? '-' : it.price) + '</td>' +
+          '<td>' + (it.status === 1 ? '<span class="tag on">起售</span>' : '<span class="tag off">停售</span>') + '</td>' +
+          '<td class="mono">' + esc(it.updateTime || '') + '</td>' +
+          '<td><div class="ops">' +
+            '<button class="' + (it.status === 1 ? 'danger' : 'ok') + '" data-toggle-path="/admin/setmeal/status/' + (it.status === 1 ? 0 : 1) + '?id=' + it.id + '">' + (it.status === 1 ? '停售' : '起售') + '</button>' +
+            '<button class="danger" data-del-path="/admin/setmeal?ids=' + it.id + '">删除</button>' +
+          '</div></td></tr>';
+      }).join('');
+      $('sm-table').innerHTML =
+        '<table><thead><tr><th>图片</th><th>套餐名称</th><th>分类</th><th>价格</th><th>状态</th><th>更新时间</th><th>操作</th></tr></thead><tbody>' +
+        (rows || '<tr><td colspan="7"><div class="empty">暂无数据</div></td></tr>') + '</tbody></table>' +
+        pager('setmeal', d.total || 0, page, 10);
+      bind($('sm-table'), 'setmeal', load, function(){});
+    }).catch(function(){ $('sm-table').innerHTML = '<div class="empty">加载失败</div>'; });
+  }
+
+  load(1);
+};
+
+/* ================= 订单 ================= */
+views.order = function(){
+  var el = $('view');
+  var statusMap = { 1:'待付款', 2:'待接单', 3:'已接单', 4:'派送中', 5:'已完成', 6:'已取消' };
+  el.innerHTML =
+    '<div class="card"><div class="toolbar">' +
+      '<input id="od-num" placeholder="订单号">' +
+      '<input id="od-phone" placeholder="手机号">' +
+      '<select id="od-status"><option value="">全部状态</option>' +
+        '<option value="2">待接单</option><option value="3">已接单</option><option value="4">派送中</option>' +
+        '<option value="5">已完成</option><option value="6">已取消</option></select>' +
+      '<button class="primary" id="od-search">查询</button>' +
+    '</div></div>' +
+    '<div class="card" style="padding:0"><div id="od-table"><div class="empty">加载中</div></div></div>';
+
+  $('od-search').addEventListener('click', function(){ load(1); });
+
+  function load(page){
+    var q = { page: page, pageSize: 10, number: $('od-num').value.trim(), phone: $('od-phone').value.trim(), status: $('od-status').value };
+    request('GET', '/admin/order/conditionSearch' + qs(q)).then(function(d){
+      state.page.order = page;
+      var rows = (d.records || []).map(function(it){
+        var ops = '<button data-detail="' + it.id + '">详情</button>';
+        if (it.status === 2) {
+          ops += '<button class="ok" data-act="/admin/order/confirm" data-body=\'' + JSON.stringify({ id: it.id }) + '\'>接单</button>';
+          ops += '<button class="danger" data-act="/admin/order/rejection" data-body=\'' + JSON.stringify({ id: it.id, rejectionReason: '餐厅繁忙，暂时无法接单' }) + '\'>拒单</button>';
+        }
+        if (it.status === 3) ops += '<button class="primary" data-act="/admin/order/delivery/' + it.id + '">派送</button>';
+        if (it.status === 4) ops += '<button class="ok" data-act="/admin/order/complete/' + it.id + '">完成</button>';
+        return '<tr>' +
+          '<td class="mono">' + esc(it.number) + '</td>' +
+          '<td>' + esc(it.consignee) + '</td>' +
+          '<td class="mono">' + esc(it.phone) + '</td>' +
+          '<td>' + esc(it.address || '') + '</td>' +
+          '<td>' + money(it.amount) + '</td>' +
+          '<td>' + (statusMap[it.status] || it.status) + '</td>' +
+          '<td class="mono">' + esc(it.orderTime || '') + '</td>' +
+          '<td><div class="ops">' + ops + '</div></td>' +
+        '</tr>';
+      }).join('');
+      $('od-table').innerHTML =
+        '<table><thead><tr><th>订单号</th><th>收货人</th><th>手机号</th><th>地址</th><th>金额</th><th>状态</th><th>下单时间</th><th>操作</th></tr></thead><tbody>' +
+        (rows || '<tr><td colspan="8"><div class="empty">暂无订单（用户端下单后此处可见）</div></td></tr>') + '</tbody></table>' +
+        pager('order', d.total || 0, page, 10);
+      var btns = $('od-table').querySelectorAll('[data-pg]');
+      for (var i = 0; i < btns.length; i++) {
+        btns[i].addEventListener('click', function(){
+          var p = Number(this.getAttribute('data-pg'));
+          if (p >= 1) { state.page.order = p; load(p); }
+        });
+      }
+      var ds = $('od-table').querySelectorAll('[data-detail]');
+      for (var j = 0; j < ds.length; j++) {
+        ds[j].addEventListener('click', function(){ orderDetail(this.getAttribute('data-detail')); });
+      }
+      var as = $('od-table').querySelectorAll('[data-act]');
+      for (var k = 0; k < as.length; k++) {
+        as[k].addEventListener('click', function(){
+          var url = this.getAttribute('data-act');
+          var bodyStr = this.getAttribute('data-body');
+          var p = bodyStr ? request('PUT', url, JSON.parse(bodyStr)) : request('PUT', url);
+          p.then(function(){ toast('操作成功'); load(state.page.order || 1); }).catch(function(){});
+        });
+      }
+    }).catch(function(){ $('od-table').innerHTML = '<div class="empty">加载失败</div>'; });
+  }
+
+  function orderDetail(id){
+    request('GET', '/admin/order/details/' + id).then(function(d){
+      var items = (d.orderDetailList || []).map(function(x){
+        return '<tr><td>' + esc(x.name) + '</td><td>' + esc(x.number) + '</td><td>' + money(x.amount) + '</td></tr>';
+      }).join('');
+      openModal('订单详情',
+        '<div class="form-row"><label>订单号</label><div class="mono">' + esc(d.number) + '</div></div>' +
+        '<div class="form-row"><label>收货信息</label><div>' + esc(d.consignee) + ' ' + esc(d.phone) + '<br>' + esc(d.address) + '</div></div>' +
+        '<div class="form-row"><label>备注</label><div>' + esc(d.remark || '无') + '</div></div>' +
+        '<div class="form-row"><label>菜品明细</label>' +
+          '<table><thead><tr><th>名称</th><th>数量</th><th>金额</th></tr></thead><tbody>' + (items || '<tr><td colspan="3">无</td></tr>') + '</tbody></table></div>' +
+        '<div class="form-row"><label>合计</label><div>' + money(d.amount) + '</div></div>',
+        function(){ return true; }, '关闭');
+    }).catch(function(){});
+  }
+
+  load(1);
+};
+
+/* ================= 营业状态 ================= */
+views.shop = function(){
+  $('view').innerHTML = '<div class="card" id="shop-card"><div class="empty">加载中</div></div>';
+  request('GET', '/admin/shop/status').then(function(st){
+    var on = Number(st) === 1;
+    $('shop-card').innerHTML =
+      '<h3>营业状态</h3>' +
+      '<div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">' +
+        '<div style="font-size:20px;font-weight:700;color:' + (on ? '#12864a' : '#7b879b') + '">' +
+          (on ? '营业中' : '已打烊') + '</div>' +
+        '<button class="' + (on ? 'danger' : 'ok') + '" id="shop-toggle">' + (on ? '点击打烊' : '点击开始营业') + '</button>' +
+      '</div>' +
+      '<p style="margin-top:14px;font-size:12.5px;color:#7b879b">该状态会同步到用户端小程序（/user/shop/status）。</p>';
+    $('shop-toggle').addEventListener('click', function(){
+      request('PUT', '/admin/shop/' + (on ? 0 : 1)).then(function(){ toast('已切换'); views.shop(); }).catch(function(){});
+    });
+  }).catch(function(){ $('shop-card').innerHTML = '<div class="empty">加载失败</div>'; });
+};
+
+/* ---------------- 启动 ---------------- */
+$('lg-btn').addEventListener('click', doLogin);
+$('lg-pass').addEventListener('keydown', function(e){ if (e.key === 'Enter') doLogin(); });
+$('btn-logout').addEventListener('click', function(){ doLogout(false); });
+
+var navLinks = document.querySelectorAll('#nav a');
+for (var i = 0; i < navLinks.length; i++) {
+  navLinks[i].addEventListener('click', function(e){
+    e.preventDefault();
+    go(this.getAttribute('data-v'));
+  });
+}
+
+if (token) {
+  // 校验既有 token 是否仍有效
+  request('GET', '/admin/employee/page?page=1&pageSize=1').then(function(){ enterApp(); })
+    .catch(function(){ doLogout(true); });
+} else {
+  $('login').style.display = 'flex';
+}
+
+})();
+</script>
+</body>
+</html>
