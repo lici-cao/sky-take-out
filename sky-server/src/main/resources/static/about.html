@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>苍穹外卖 · 桌面版</title>
+<style>
+  :root{--bg:#0f1720;--panel:#16212c;--line:#24313d;--text:#e6edf3;--sub:#93a4b3;--accent:#2f9e6d;--accent2:#3b82f6;}
+  *{box-sizing:border-box}
+  body{margin:0;background:radial-gradient(1200px 600px at 20% -10%,#1b2b38 0%,var(--bg) 55%);color:var(--text);
+       font:15px/1.65 -apple-system,"Segoe UI","Microsoft YaHei",sans-serif;}
+  .wrap{max-width:1080px;margin:0 auto;padding:44px 24px 64px}
+  header{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  .logo{width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,var(--accent),#1f7a54);
+        display:grid;place-items:center;font-size:22px}
+  h1{font-size:26px;margin:0;letter-spacing:.5px}
+  .ver{font-size:12px;color:var(--sub);border:1px solid var(--line);border-radius:999px;padding:2px 10px}
+  .status{margin-left:auto;display:flex;align-items:center;gap:8px;font-size:13px;color:var(--sub)}
+  .dot{width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 4px rgba(47,158,109,.15)}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-top:28px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px 20px}
+  .card h3{margin:0 0 10px;font-size:14px;color:var(--sub);font-weight:600;letter-spacing:.6px;text-transform:uppercase}
+  .kv{display:flex;justify-content:space-between;gap:12px;padding:5px 0;border-bottom:1px dashed rgba(255,255,255,.05);font-size:14px}
+  .kv:last-child{border-bottom:0}
+  .kv span:last-child{color:#cfe6da;word-break:break-all;text-align:right}
+  code{background:#0c141b;border:1px solid var(--line);border-radius:6px;padding:1px 6px;font-size:13px;color:#a5d6bb}
+  .btns{display:flex;gap:12px;flex-wrap:wrap;margin-top:22px}
+  a.btn{display:inline-flex;align-items:center;gap:8px;text-decoration:none;padding:11px 20px;border-radius:10px;font-size:14px;
+        background:var(--accent);color:#04150c;font-weight:600;transition:.15s}
+  a.btn.ghost{background:transparent;border:1px solid var(--line);color:var(--text);font-weight:500}
+  a.btn:hover{transform:translateY(-1px);filter:brightness(1.06)}
+  table{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:6px}
+  th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line)}
+  th{color:var(--sub);font-weight:600;font-size:12.5px;letter-spacing:.4px}
+  td code{font-size:12.5px}
+  .tag{font-size:11.5px;padding:1px 7px;border-radius:999px;border:1px solid var(--line);color:var(--sub)}
+  .tag.a{color:#8fc7ff;border-color:#2b4a66}
+  .tag.u{color:#ffd08f;border-color:#664c2b}
+  footer{margin-top:34px;color:var(--sub);font-size:12.5px;line-height:1.9}
+  .warn{color:#ffc46b}
+</style>
+</head>
+<body>
+<div style="position:sticky;top:0;z-index:9;display:flex;gap:14px;align-items:center;justify-content:center;flex-wrap:wrap;padding:10px 16px;background:#1c2b45;color:#cfd8e6;font-size:13px"><b style="color:#fff">苍穹外卖 桌面版 v1.1.0</b><a href="/manage/" style="color:#fff;background:#2f6feb;padding:5px 14px;border-radius:6px;text-decoration:none">进入管理后台</a><a href="/doc.html" style="color:#8fb3ff;text-decoration:none">接口文档</a></div>
+<div class="wrap">
+  <header>
+    <div class="logo">🍜</div>
+    <h1>苍穹外卖 · 桌面版</h1>
+    <span class="ver">v1.1.0 / Spring Boot 3 · H2</span>
+    <div class="status"><span class="dot"></span><span id="st">服务运行中</span></div>
+  </header>
+
+  <p style="color:var(--sub);margin:14px 0 0">
+    管理端 9 个控制器 · 用户端 8 个控制器 · 内嵌 H2 文件数据库 · 无需安装 MySQL 与 JDK。
+  </p>
+
+  <div class="btns">
+    <a class="btn" href="/doc.html" target="_blank">打开接口文档（Knife4j）</a>
+    <a class="btn ghost" href="/admin/shop/status" target="_blank">营业状态接口</a>
+    <a class="btn ghost" href="/doc.html#/home" target="_blank">接口分组一览</a>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <h3>管理端账号</h3>
+      <div class="kv"><span>用户名</span><span><code>admin</code></span></div>
+      <div class="kv"><span>密码</span><span><code>123456</code></span></div>
+      <div class="kv"><span>登录接口</span><span><code>POST /admin/employee/login</code></span></div>
+      <div class="kv"><span>令牌位置</span><span>Header <code>token</code></span></div>
+    </div>
+    <div class="card">
+      <h3>运行环境</h3>
+      <div class="kv"><span>服务端口</span><span><code>8080</code></span></div>
+      <div class="kv"><span>数据库</span><span>H2 文件库（MySQL 兼容模式）</span></div>
+      <div class="kv"><span>数据文件</span><span><code>data\sky_take_out.mv.db</code></span></div>
+      <div class="kv"><span>日志文件</span><span><code>logs\sky-take-out.log</code></span></div>
+    </div>
+    <div class="card">
+      <h3>用户端（小程序）</h3>
+      <div class="kv"><span>登录接口</span><span><code>POST /user/user/login</code></span></div>
+      <div class="kv"><span>令牌位置</span><span>Header <code>authentication</code></span></div>
+      <div class="kv"><span>请求地址</span><span><code>http://127.0.0.1:8080</code></span></div>
+      <div class="kv"><span>说明</span><span>开发者工具需关闭域名校验</span></div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:16px">
+    <h3>常用接口速查</h3>
+    <table>
+      <tr><th>端</th><th>方法</th><th>路径</th><th>用途</th></tr>
+      <tr><td><span class="tag a">管理端</span></td><td>POST</td><td><code>/admin/employee/login</code></td><td>员工登录，返回 JWT</td></tr>
+      <tr><td><span class="tag a">管理端</span></td><td>GET</td><td><code>/admin/employee/page</code></td><td>员工分页查询</td></tr>
+      <tr><td><span class="tag a">管理端</span></td><td>POST</td><td><code>/admin/dish</code></td><td>新增菜品</td></tr>
+      <tr><td><span class="tag a">管理端</span></td><td>GET</td><td><code>/admin/order/conditionSearch</code></td><td>订单条件搜索</td></tr>
+      <tr><td><span class="tag a">管理端</span></td><td>POST</td><td><code>/admin/common/upload</code></td><td>图片上传（存储于 upload 目录）</td></tr>
+      <tr><td><span class="tag u">用户端</span></td><td>POST</td><td><code>/user/user/login</code></td><td>微信用户登录（演示用 code）</td></tr>
+      <tr><td><span class="tag u">用户端</span></td><td>GET</td><td><code>/user/dish/list?categoryId=1</code></td><td>按分类查询菜品</td></tr>
+      <tr><td><span class="tag u">用户端</span></td><td>POST</td><td><code>/user/shoppingCart/add</code></td><td>加入购物车</td></tr>
+    </table>
+  </div>
+
+  <footer>
+    <div>· 首次启动会自动建表并写入演示数据（1 个管理员、3 个分类、4 道菜品、1 个套餐）。删除 <code>data</code> 目录后重启即可恢复到初始状态。</div>
+    <div>· <span class="warn">微信登录 / 微信支付 / 退款</span> 相关接口依赖真实商户号与证书，在离线桌面环境会返回失败，属预期行为。</div>
+    <div>· 本项目为教学演示用途，默认配置中的密钥与账号口令不应直接用于生产环境。</div>
+  </footer>
+</div>
+</body>
+</html>
